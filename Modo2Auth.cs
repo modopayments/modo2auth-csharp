@@ -35,8 +35,11 @@ namespace Modo
             return signature;
         }
 
-        public String createModoToken(String uri, String body)
+        public String createModoToken(String uri, String body="")
         {
+            if (body == null)
+                body = "";
+
             // Get a SHA of the request body 
             byte[] hashBytes = _shaGenerator.ComputeHash(Encoding.ASCII.GetBytes(body));
             String bodySha = BitConverter.ToString(hashBytes).Replace("-","").ToLower();
