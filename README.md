@@ -92,3 +92,5 @@ No exceptions expected during the execution of this function
 
 The Modo2Auth library has been tested for the following .NET libraries:
 - .NET Core 3.1
+
+- Test
