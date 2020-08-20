@@ -55,7 +55,7 @@ namespace Modo
             // Sign it with the API secret
             String signature = createSignature(payload);
 
-            // put it all toegether and create a token
+            // put it all together and create a token
             String modoAuthToken = String.Format("MODO2 {0}.{1}.{2}", _header, payload, signature);
 
             return modoAuthToken;
