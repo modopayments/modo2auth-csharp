@@ -2,7 +2,7 @@
 
 > A .NET Core solution to generate authentication tokens to communicate with the Modo servers
 
-### Prerequesites
+### Prerequisites
 
 **Credentials** that are created and shared by Modo. These will be different for each environment (`int`, `prod`, `local` etc...).
 
