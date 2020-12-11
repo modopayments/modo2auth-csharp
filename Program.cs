@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.IO;
-
+using System.Text;
 
 namespace Modo
 {
@@ -25,7 +25,7 @@ namespace Modo
             request.Method = WebRequestMethods.Http.Post;
 
             // Add our auth token to the http POST
-            request.Headers.Add("Authorization", auth.createModoToken(apiUri, requestBody));
+            request.Headers.Add("Authorization", auth.createModoToken(apiUri, requestBody, Encoding.UTF8));
 
             // Write out the body contents
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))

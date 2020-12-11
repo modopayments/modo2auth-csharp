@@ -37,7 +37,7 @@ request.Method = WebRequestMethods.Http.Post;
 
 # 4 - Create an auth token from the apiUri and requestBody, then add it to the Auth header
 ## 4 Note: apiUri is the request path after the server name/IP address
-request.Headers.Add("Authorization", auth.createModoToken(apiUri, requestBody));
+request.Headers.Add("Authorization", auth.createModoToken(apiUri, requestBody, Encoding.UTF8));
 
 # 5 - Send the HTTP Request
 using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
