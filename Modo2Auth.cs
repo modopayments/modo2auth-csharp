@@ -20,7 +20,13 @@ namespace Modo
             _shaGenerator = SHA256.Create();
 
             _apiId = apiId;
-            _header = Convert.ToBase64String(Encoding.ASCII.GetBytes(cHeaderPlain)).TrimEnd('=');
+            _header = toBase64UrlSafeString( Encoding.ASCII.GetBytes(cHeaderPlain) );
+        }
+
+        private String toBase64UrlSafeString(byte[] bytes) {
+            String base64String = Convert.ToBase64String(bytes);
+            base64String = base64String.TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            return base64String;
         }
 
         private String createSignature(String payload)
@@ -28,21 +34,21 @@ namespace Modo
             String message = String.Format("{0}.{1}", _header, payload);
             byte[] message_bytes = Encoding.ASCII.GetBytes(message);
 
-            byte[] hashBytes = _hmac.ComputeHash(message_bytes);
-
-            String signature = Convert.ToBase64String(hashBytes);
-            signature = signature.TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            byte[] hashBytes;
+            lock(_hmac) {
+                hashBytes = _hmac.ComputeHash(message_bytes);
+            }
+            String signature = toBase64UrlSafeString(hashBytes);
             return signature;
         }
 
-        public String createModoToken(String uri, String body="")
-        {
-            if (body == null)
-                body = "";
+        public String createModoToken(String uri, byte[] body) {
 
-            // Get a SHA of the request body 
-            byte[] hashBytes = _shaGenerator.ComputeHash(Encoding.ASCII.GetBytes(body));
-            String bodySha = BitConverter.ToString(hashBytes).Replace("-","").ToLower();
+            byte[] hashBytes;
+            lock(_shaGenerator) {
+                hashBytes = _shaGenerator.ComputeHash(body);
+            }
+            String bodySha = BitConverter.ToString(hashBytes).Replace("-","").ToLower();    // also remove the - chars that c# adds in the conversion
 
             // Current time in seconds since Epoch
             TimeSpan t = DateTime.UtcNow - _epochDate;
@@ -50,7 +56,7 @@ namespace Modo
 
             // create the payload base64 string (trimmed)
             String payloadPlain = String.Format("{{\"iat\":{0},\"api_identifier\":\"{1}\",\"api_uri\":\"{2}\",\"body_hash\":\"{3}\"}}", secondsSinceEpoch, _apiId, uri, bodySha);
-            String payload = Convert.ToBase64String(Encoding.ASCII.GetBytes(payloadPlain)).TrimEnd('=');
+            String payload = toBase64UrlSafeString( Encoding.ASCII.GetBytes(payloadPlain) );
 
             // Sign it with the API secret
             String signature = createSignature(payload);
@@ -59,6 +65,21 @@ namespace Modo
             String modoAuthToken = String.Format("MODO2 {0}.{1}.{2}", _header, payload, signature);
 
             return modoAuthToken;
+        }
+
+        public String createModoToken(String uri) {
+            return createModoToken(uri, "", Encoding.UTF8);
+        }
+
+        public String createModoToken(String uri, String body, Encoding encodingScheme)
+        {
+            if (body == null)
+                body = "";
+
+            // Get a SHA of the request body 
+            byte[] bodyBytes = encodingScheme.GetBytes(body);
+
+            return createModoToken(uri, bodyBytes);
         }
 
     }
