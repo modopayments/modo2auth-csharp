@@ -34,14 +34,20 @@ namespace Modo
             String message = String.Format("{0}.{1}", _header, payload);
             byte[] message_bytes = Encoding.ASCII.GetBytes(message);
 
-            byte[] hashBytes = _hmac.ComputeHash(message_bytes);
+            byte[] hashBytes;
+            lock(_hmac) {
+                hashBytes = _hmac.ComputeHash(message_bytes);
+            }
             String signature = toBase64UrlSafeString(hashBytes);
             return signature;
         }
 
         public String createModoToken(String uri, byte[] body) {
 
-            byte[] hashBytes = _shaGenerator.ComputeHash(body);;
+            byte[] hashBytes;
+            lock(_shaGenerator) {
+                hashBytes = _shaGenerator.ComputeHash(body);
+            }
             String bodySha = BitConverter.ToString(hashBytes).Replace("-","").ToLower();    // also remove the - chars that c# adds in the conversion
 
             // Current time in seconds since Epoch
