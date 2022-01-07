@@ -27,7 +27,7 @@ Modo2Auth auth = new Modo2Auth(apiSecret, apiId);
 
 # 2 - Define the Request URL and Request body
 String apiUri = "/v2/reports";
-String fullUri = "https://checkout.mtktest.modopayments.net/v2/reports";
+String fullUri = "https://checkout.prod.modopayments.net/v3/checkout/list";
 String requestBody = "{\"start_date\": \"2020-07-13T00:00:00Z\",\"end_date\": \"2020-07-13T23:59:59Z\"}";
 
 # 3 - Generate an HttpWebRequest (POST Method) to our given endpoint
@@ -48,28 +48,6 @@ using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
 }
 
 #6 - Read in the HTTP Response
-HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-```
-
-#### `GET` Example
-```
-# 1 - Instantiate the Modo2Auth class with a given apiSecret and apiId
-Modo2Auth auth = new Modo2Auth(apiSecret, apiId);
-
-# 2 - Define the Request URL
-apiUri = "/v2/vault/public_key";
-fullUri = "https://checkout.mtktest.modopayments.net/v2/vault/public_key";
-
-# 3 - Generate an HttpWebRequest (GET Method) to our given endpoint
-HttpWebRequest request = (HttpWebRequest)WebRequest.Create(fullUri);
-request.ContentType = "application/json";
-request.Method = WebRequestMethods.Http.Get;
-
-# 4 - Create an auth token with just the apiUri, then add it to the Auth header
-## 4 Note: apiUri is the request path after the server name/IP address
-request.Headers.Add("Authorization", auth.createModoToken(apiUri));
-
-#6 - Send the GET Request and read in the HTTP Response
 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 ```
 
