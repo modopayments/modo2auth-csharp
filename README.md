@@ -26,8 +26,8 @@ See this code in action by running the modo2auth-csharp.csproj from command line
 Modo2Auth auth = new Modo2Auth(apiSecret, apiId);
 
 # 2 - Define the Request URL and Request body
-String apiUri = "/v2/reports";
-String fullUri = "https://checkout.prod.modopayments.net/v3/checkout/list";
+String apiUri = "/v3/checkout/list";
+String fullUri = "http[URL_HERE]/v3/checkout/list";
 String requestBody = "{\"start_date\": \"2020-07-13T00:00:00Z\",\"end_date\": \"2020-07-13T23:59:59Z\"}";
 
 # 3 - Generate an HttpWebRequest (POST Method) to our given endpoint
